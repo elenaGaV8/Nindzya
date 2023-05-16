@@ -6,13 +6,15 @@ from time import time as timer
 
 window = display.set_mode((1000, 800))
 display.set_caption('Ниндзя- Фрукты')
-background= transform.scale(image.load('background.png'), (1000, 800))
+background= transform.scale(image.load('449.jpg'), (1000, 800))
 
-'''mixer.music.load('main_theme.ogg')
+mixer.music.load('main_theme.mp3')
 mixer.music.play()
-cuts = mixer.Sound('fire.ogg')'''
-clock = time.Clock()
+'''cuts = mixer.Sound('fire.ogg')'''
+'''start = mixer.Sound('начало.mp3')'''
 
+clock = time.Clock()
+lost = 0
 class GameSprite(sprite.Sprite):
     def __init__(self, image1, x, y, speed, size1, size2):
         super(). __init__()
@@ -30,32 +32,47 @@ class Player(GameSprite):
         keys_pressed = key.get_pressed()
         if keys_pressed[K_LEFT] and self.rect.x >5:
             self.rect.x -= self.speed
-        if keys_pressed[K_RIGHT] and self.rect.x <595:
+        if keys_pressed[K_RIGHT] and self.rect.x <760:
             self.rect.x += self.speed
-        '''if keys_pressed[K_UP] and self.rect.y > 350:
-            self.rect.y -= self.speed
-        if keys_pressed[K_DOWN] and self.rect.y < 395:
-            self.rect.y += self.speed'''
+    def cut_them(self):
+        self.image1 = ('ниндзя взмах.png',self.rect.centerx, self.rect.top, 8, 250, 350)
+        self.image1.reset()
+
+
 
 class Enemy(GameSprite):
     def update(self):
         self.rect.y += self.speed
-        if self.rect.y >= 500:
+        if self.rect.y >= 800:
             self.rect.y = 0
-            self.rect.x = randint(30,650)
-            self.rect.x += self.speed
+            self.rect.x = randint(40,900)
             global lost          
             lost += 1
 
-'''class Bullet(GameSprite):
-    def update(self):
-        self.rect.y -= self.speed
-        if self.rect.y <= 0:
-           self.kill()'''
-            
-fruits = sprite.Group()
 
-fight = True
+nindzya = Player('ниндзя замах.png', 600, 400, 8, 350, 450)           
+fruits = sprite.Group()
+apple1 = Enemy('apple.png', 100, 0, 4,70,70)
+apple2 = Enemy('apple.png', 800, 0, 6,70,70)
+
+banana = Enemy('banana.png',350, 0, 2,70,70)
+grapefruit = Enemy('grapefruit.png', 550, 0, 3,80,80)
+kiwi1 = Enemy('kiwi.png',260, 0, 1,50,50)
+kiwi2 = Enemy('kiwi.png',750, 0, 7,50,50)
+
+watermelon = Enemy('watermelon.png',400, 0, 5,100,100)
+
+fruits.add(apple1)
+fruits.add(apple2)
+
+fruits.add(banana)
+fruits.add(grapefruit)
+fruits.add(kiwi1)
+fruits.add(kiwi2)
+
+fruits.add(watermelon)
+all_fruits = ['apple.png', 'banana.png', 'grapefruit.png', 'kiwi.png', 'watermelon.png']
+
 FPS = 60
 finish = False
 num_f = 0
@@ -63,73 +80,68 @@ atk = 0
 rei_t = False
 health = 10
 play_again = 1
+def draw_text(surface, text, size, x, y):
+    font = pygame.font.SysFont('Arial', size)
+    text_sur = font.render(text, True, (255, 255, 255))
+    text_rect = text_sur.get_rect()
+    text_rect.midtop = (x, y)
+    surface.blit(text_sur, text_rect)
+
+
+fight = True
 while fight:
     for i in event.get():
         if i.type == QUIT:
             fight = False
         if i.type == KEYDOWN:
-            '''if i.key == K_SPACE:
-                if num_f <15:
-                    shuttle.fire()
-                    shots.play()
-                    num_f += 1
-                if num_f >= 15:
-                    e = timer()
-                    rei_t = True'''
             if i.key == K_ESCAPE:
                 finish = True
-                pause = font.SysFont('Arial', 30).render('Хотите продолжить? Нажмите R', 1 , (255, 255, 255))
+                pause = font.SysFont('Arial', 100).render('Pause! Нажмите R', 1 , (255, 255, 255))
                 window.blit(pause, (150,250))
             if i.key == K_r:
                 finish = False
+            if i.key == K_f:
+                nindzya = Player('ниндзя взмах.png', 600, 400, 8, 350, 450)
+        elif i.type ==KEYUP:
+            if i.key == K_f:
+                nindzya = Player('ниндзя замах.png', nindzya.rect.x, nindzya.rect.y, 8, 350, 450) 
+
                 
                     
                 
-                
+    
     if finish != True:
-        window.blit(background, (0,0))
-       
-        '''touch= sprite.spritecollide(shuttle, ufos, False)
-        boom =sprite.spritecollide(shuttle, astrous, True)
-        get_ufos = sprite.groupcollide(ufos, bullets, True,True)
-        for i in get_ufos:
-            atk += 1
-            ufo = Enemy('ufo.png', randint(50, 350), 0, 3, 65, 65)
-            ufos.add(ufo)
-        counter = font.SysFont('Arial', 30).render('Счётчик:'+ str(atk), 1 , (255, 255, 255))
-        lost_t = font.SysFont('Arial',30).render('Пропущено:' + str(lost), 1 , (255, 255, 255))
-        window.blit(counter, (20, 20))
-        window.blit(lost_t, (50,50))'''
-        if rei_t == True:
-            num = timer()
-            if num-e <=2:
-                reshot = font.SysFont('Arial', 30).render('Wait, перезарядка...', 1 , (139, 0, 0))
-                window.blit(reshot, (350, 420))
-            else:
-                num_f = 0
-                rei_t = False
-        '''if touch:
-            sprite.spritecollide(shuttle, ufos, True)
-            health-= 1
-            ufo = Enemy('ufo.png', randint(50, 350), 0, 3, 65, 65)
-            ufos.add(ufo)
 
+        window.blit(background, (0,0))
+        fruits.draw(window)
+        fruits.update()
+        nindzya.reset()
+        nindzya.update()
+        touch= sprite.spritecollide(nindzya, fruits, False)
+        get_fruits =sprite.spritecollide(nindzya, fruits, True)
+        for i in get_fruits:
+            atk += 1
+            fruit = Enemy(all_fruits[randint(0, 4)], randint(50, 950), 0, randint(1, 6), randint(50, 100),randint(50, 100))
+            fruits.add(fruit)
             
-        if health <= 0:
-            finish = True
-            lose = font.SysFont('Arial', 70).render('Ты проиграл!', 1 , (139, 0, 0))
-            window.blit(lose, (150, 250))
+            
+        counter = font.SysFont('Arial', 40).render('Счётчик:'+ str(atk), 1 , (255, 255, 255))
+        lost_t = font.SysFont('Arial',40).render('Пропущено:' + str(lost), 1 , (255, 255, 255))
+        
+        window.blit(counter, (20, 20))
+        window.blit(lost_t, (50,50))
+        
         if lost >= 25:
             finish = True
-            lose = font.SysFont('Arial', 70).render('Ты проиграл!', 1 , (139, 0, 0))
+            lose = font.SysFont('Arial', 100).render('Ты проиграл!', 1 , (139, 0, 0))
             window.blit(lose, (150, 250))
-        if atk >= 30:
+        if atk >= 40:
             finish = True
-            win = font.SysFont('Arial', 70).render('Ты выиграл!!!', 1 , (135, 206, 250))
-            window.blit(win, (150, 250))'''
+            win = font.SysFont('Arial', 100).render('Ты выиграл!!!', 1 , (135, 206, 250))
+            window.blit(win, (150, 250))
+
 
     clock.tick(FPS)
     display.update()
-    
 
 display.update()
