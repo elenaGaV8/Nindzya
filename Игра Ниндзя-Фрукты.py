@@ -104,7 +104,13 @@ while fight:
                 nindzya = Player('ниндзя взмах.png', 600, 400, 8, 350, 450)
         elif i.type ==KEYUP:
             if i.key == K_f:
-                nindzya = Player('ниндзя замах.png', nindzya.rect.x, nindzya.rect.y, 8, 350, 450) 
+                nindzya = Player('ниндзя замах.png', nindzya.rect.x, nindzya.rect.y, 8, 350, 450)
+                touch= sprite.spritecollide(nindzya, fruits, False)
+                get_fruits =sprite.spritecollide(nindzya, fruits, True)
+                for i in get_fruits:
+                    atk += 1
+                    fruit = Enemy(all_fruits[randint(0, 4)], randint(50, 950), 0, randint(1, 6), randint(50, 100),randint(50, 100))
+                    fruits.add(fruit)
 
                 
                     
@@ -116,14 +122,7 @@ while fight:
         fruits.draw(window)
         fruits.update()
         nindzya.reset()
-        nindzya.update()
-        touch= sprite.spritecollide(nindzya, fruits, False)
-        get_fruits =sprite.spritecollide(nindzya, fruits, True)
-        for i in get_fruits:
-            atk += 1
-            fruit = Enemy(all_fruits[randint(0, 4)], randint(50, 950), 0, randint(1, 6), randint(50, 100),randint(50, 100))
-            fruits.add(fruit)
-            
+        nindzya.update()            
             
         counter = font.SysFont('Arial', 40).render('Счётчик:'+ str(atk), 1 , (255, 255, 255))
         lost_t = font.SysFont('Arial',40).render('Пропущено:' + str(lost), 1 , (255, 255, 255))
